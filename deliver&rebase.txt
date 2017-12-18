@@ -1,0 +1,191 @@
+deliver&rebase
+过程说明：(tesla_dev和tesla_dev2修改了同一个文件的同一个地方，[info]后面为每次执行命令后的回显)
+1、tesla_dev交付至tesla_uat，打基线tesla_uat_20171127_001（步骤一二三）
+2、tesla_dev2交付至tesla_uat，提示冲突并解决（yes，no手动填写），打基线tesla_uat_20171127_002（步骤四五六）
+3、基线tesla_uat_20171127_002重新同步到tesla_dev（步骤七八）
+
+一、cleartool deliver -str tesla_dev@\pvob-tesla -tar tesla_uat@\pvob-tesla -act dev_activity -f
+[info]
+C:\Users\ccadmin>cleartool deliver -str tesla_dev@\pvob-tesla -tar tes
+la_uat@\pvob-tesla -act dev_activity -f
+Changes to be DELIVERED to default target stream in project "tesla":
+          FROM: stream "tesla_dev"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+Activities included in this operation:
+        activity:dev_activity@\pvob-tesla       ccadmin "dev_activity"
+Do you wish to continue with this deliver operation?  [no] Automatically created
+ branch type "tesla_uat" from global definition in VOB "\pvob-tesla".
+Created branch "tesla_uat" from "M:\ccadmin_tesla_uat\tesla\StudentClient\src\co
+m\white\dao\StudentDAO.java" version "\main\tesla_int\1".
+Checked out "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentD
+AO.java" from version "\main\tesla_int\tesla_uat\0".
+  Attached activity:
+    activity:deliver.tesla_dev.20171127.105743@\pvob-tesla  "deliver tesla_dev o
+n 2017/11/27 10:57:43."
+Needs Merge "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentD
+AO.java" [(automatic) to \main\tesla_int\tesla_uat\CHECKEDOUT from \main\tesla_i
+nt\tesla_dev\1 (base also \main\tesla_int\1)]
+Trivial merge: "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\Stude
+ntDAO.java" is same as base "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\wh
+ite\dao\StudentDAO.java@@\main\tesla_int\1".
+Copying "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentDAO.j
+ava@@\main\tesla_int\tesla_dev\1" to output file.
+Output of merge is in "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\da
+o\StudentDAO.java".
+Recorded merge of "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\St
+udentDAO.java".
+
+Deliver has merged
+          FROM: stream "tesla_dev"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+Build and test are necessary in target view "ccadmin_tesla_uat"
+to ensure that any merges and configuration changes were completed correctly.  W
+hen build and
+test are confirmed, run "cleartool deliver -complete".
+
+ 
+二、cleartool deliver -com -str tesla_dev@\pvob-tesla
+[info]
+C:\Users\ccadmin>cleartool deliver -com -str tesla_dev@\pvob-tesla -f
+Resume deliver
+          FROM: stream "tesla_dev"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+Activities included in this operation:
+        activity:dev_activity@\pvob-tesla       ccadmin "dev_activity"
+Deliver has completed
+          FROM: stream "tesla_dev"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+
+三、cleartool mkbl -com tesla_comp@\pvob-tesla -fu -vie ccadmin_tesla_uat tesla_uat_20171127_001
+[info]
+C:\Users\ccadmin>cleartool mkbl -com tesla_comp@\pvob-tesla -fu -vie ccadmin_tes
+la_uat tesla_uat_20171127_001
+Created baseline "tesla_uat_20171127_001" in component "tesla_comp".
+Begin incrementally labeling baseline "tesla_uat_20171127_001".
+Done incrementally labeling baseline "tesla_uat_20171127_001".
+Begin fully labeling baseline "tesla_uat_20171127_001".
+Done fully labeling baseline "tesla_uat_20171127_001".
+四、cleartool deliver -str tesla_dev2@\pvob-tesla -tar tesla_uat@\pvob-tesla -act dev2_activity -f
+[info]
+C:\Users\ccadmin>cleartool deliver -str tesla_dev2@\pvob-tesla -tar tesla_uat@\p
+vob-tesla -act dev2_activity -f
+Changes to be DELIVERED to default target stream in project "tesla":
+          FROM: stream "tesla_dev2"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+Activities included in this operation:
+        activity:dev2_activity@\pvob-tesla      ccadmin "dev2_activity"
+Checked out "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentD
+AO.java" from version "\main\tesla_int\tesla_uat\1".
+  Attached activity:
+    activity:deliver.tesla_dev2.20171127.143534@\pvob-tesla  "deliver tesla_dev2
+ on 2017/11/27 14:35:34."
+Needs Merge "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentD
+AO.java" [to \main\tesla_int\tesla_uat\CHECKEDOUT from \main\tesla_int\tesla_dev
+2\1 base \main\tesla_int\1]
+********************************
+<<< file 1: M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentDA
+O.java@@\main\tesla_int\1
+>>> file 2: M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentDA
+O.java@@\main\tesla_int\tesla_dev2\1
+>>> file 3: M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\StudentDA
+O.java
+********************************
+-----------[after 0 file 1]------------|---------[inserted 1-3 file 2]---------
+                                      -| fuckfuckfuck
+                                       | play wawa
+                                       | hahahaha
+                                       |-
+-----------[after 0 file 1]------------|---------[inserted 1-3 file 3]---------
+                                      -| just test
+                                       | java easy
+                                       | fuck
+                                       |-
+Do you want the INSERTION made in file 2?  [yes] yes
+Applying INSERT from file 2 [lines 1-3]
+Do you want the INSERTION made in file 3?  [no] no
+============
+============
+Output of merge is in "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\da
+o\StudentDAO.java".
+Recorded merge of "M:\ccadmin_tesla_uat\tesla\StudentClient\src\com\white\dao\St
+udentDAO.java".
+
+
+Deliver has merged
+          FROM: stream "tesla_dev2"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+Build and test are necessary in target view "ccadmin_tesla_uat"
+to ensure that any merges and configuration changes were completed correctly.  W
+hen build and
+test are confirmed, run "cleartool deliver -complete".
+
+五、cleartool deliver -com -str tesla_dev2@\pvob-tesla
+[info]
+C:\Users\ccadmin>cleartool deliver -com -str tesla_dev2@\pvob-tesla -f
+Resume deliver
+          FROM: stream "tesla_dev2"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+Activities included in this operation:
+        activity:dev2_activity@\pvob-tesla      ccadmin "dev2_activity"
+Deliver has completed
+          FROM: stream "tesla_dev2"
+          TO: stream "tesla_uat"
+Using target view: "ccadmin_tesla_uat".
+
+六、cleartool mkbl -com tesla_comp@\pvob-tesla -fu -vie ccadmin_tesla_uat tesla_uat_20171127_002
+[info]
+C:\Users\ccadmin>cleartool mkbl -com tesla_comp@\pvob-tesla -fu -vie ccadmin_tes
+la_uat tesla_uat_20171127_002
+Created baseline "tesla_uat_20171127_002" in component "tesla_comp".
+Begin incrementally labeling baseline "tesla_uat_20171127_002".
+Done incrementally labeling baseline "tesla_uat_20171127_002".
+Begin fully labeling baseline "tesla_uat_20171127_002".
+Done fully labeling baseline "tesla_uat_20171127_002".
+七、cleartool rebase -vie ccadmin_tesla_dev -str tesla_dev@\pvob-tesla -bas tesla_uat_20171127_002
+[info]
+C:\Users\ccadmin>cleartool rebase -vie ccadmin_tesla_dev -str tesla_dev@\pvob-te
+sla -bas tesla_uat_20171127_002
+Advancing to baseline "tesla_uat_20171127_002" of component "tesla_comp"
+Updating rebase view's config spec...
+Creating integration activity...
+Setting integration activity...
+Merging files...
+Checked out "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\white\dao\StudentD
+AO.java" from version "\main\tesla_int\tesla_dev\1".
+  Attached activity:
+    activity:rebase.tesla_dev.20171127.145410@\pvob-tesla  "rebase tesla_dev on
+2017/11/27 14:54:10."
+Needs Merge "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\white\dao\StudentD
+AO.java" [(automatic) to \main\tesla_int\tesla_dev\CHECKEDOUT from \main\tesla_i
+nt\tesla_uat\2 (base also \main\tesla_int\tesla_dev\1)]
+Trivial merge: "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\white\dao\Stude
+ntDAO.java" is same as base "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\wh
+ite\dao\StudentDAO.java@@\main\tesla_int\tesla_dev\1".
+Copying "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\white\dao\StudentDAO.j
+ava@@\main\tesla_int\tesla_uat\2" to output file.
+Output of merge is in "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\white\da
+o\StudentDAO.java".
+Recorded merge of "M:\ccadmin_tesla_dev\tesla\StudentClient\src\com\white\dao\St
+udentDAO.java".
+Build and test are necessary to ensure that any merges and configuration changes
+ were completed correctly.
+When build and test are confirmed, run "cleartool rebase -complete".
+
+八、cleartool rebase -com -str tesla_dev@\pvob-tesla
+C:\Users\ccadmin>cleartool rebase -com -str tesla_dev@\pvob-tesla
+Rebase in progress on stream "tesla_dev".
+Started by "ccadmin" at 2017/11/27 14:54:10.
+Merging files...
+Checking in files...
+Clearing integration activity...
+Updating stream's configuration...
+Cleaning up...
+Rebase completed.
+
