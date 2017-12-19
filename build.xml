@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="IFMS" default="clean">
+
+	
+	<!-- 定义全局变量-->
+	<property name="baseDir" location="." />
+	
+
+	
+	<property name="distDir" location="dist" />
+
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.5" />
+	<property name="source" value="1.5" />
+	
+	<!--获取jar包版本号，加载版本信息文件-->
+	<property file="../CI_PYTHON_SCRIPT/config/jar-version.properties"/>	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+
+	
+
+	
+	<path id="bankchannel.lib.path">
+		
+		<fileset dir="${baseDir}/bankchannel/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	
+	</path>	
+	
+	
+	
+	<path id="hostchannel.lib.path">
+		<fileset dir="${baseDir}/hostchannel/WebContent/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+
+		
+	</path>
+	
+	
+	
+	
+	<!-- 初始化-->
+	<target name="init" unless="initcondition">
+		
+		
+
+		
+		<delete dir="${distDir}"/>
+		<mkdir dir="${distDir}" />
+		<condition property="initcondition">  
+            <istrue value="true"/>  
+        </condition> 
+	</target>
+
+	
+
+    
+	<!--##########################bankchannel/hostchannel编译###################################-->
+	<property name="bankchannel.output.classes" value="${baseDir}/bankchannel/WebContent/WEB-INF/classes" />
+	<path id="bankchannel.java.config.folders">
+		<fileset dir="${baseDir}/bankchannel/etc" excludes="**/*.java"/>
+		<fileset dir="${baseDir}/bankchannel/src/" excludes="**/*.java"/>
+	</path>
+	<!-- 编译apbatch工程 -->
+	<target name="compilebankchannel" >
+		<!-- 清理生成的类文件 -->
+		<delete dir="${bankchannel.output.classes}"/>
+		<mkdir dir="${bankchannel.output.classes}"/>
+ 
+		<javac debug="true" srcdir="${baseDir}/bankchannel/src" 
+		      
+					  debuglevel="${debuglevel}" encoding="utf-8" destdir="${bankchannel.output.classes}" source="${source}" target="${target}"  optimize="${optimize}" memorymaximumsize="500M"   fork="true" >
+			<!--src refid="apcal.java.sources.folders" /-->
+			<compilerarg line="-Xlint:unchecked  -Xlint:deprecation" />
+			<classpath refid="bankchannel.lib.path" />
+		</javac> 
+
+		<!-- 拷贝所有的配置文件 -->
+		<copy todir="${bankchannel.output.classes}"  overwrite="true">
+			<path refid="bankchannel.java.config.folders"/>
+		</copy>
+	</target>
+
+	<!-- 打war包-->
+	<target name="bankchannel" depends="compilebankchannel">
+		<war warfile="${distDir}/bankchannel.war" webxml="${baseDir}/bankchannel/WebContent/WEB-INF/web.xml">
+		  <fileset dir="${baseDir}/bankchannel/WebContent"> 
+			  <exclude name="**/lib/com/**" />
+				<exclude name="**/lib/META-INF/**" />   
+			</fileset>
+		</war>
+	</target>
+	
+	<property name="hostchannel.output.classes" value="${baseDir}/hostchannel/WebContent/WEB-INF/classes" />
+	<path id="hostchannel.java.config.folders">
+		<fileset dir="${baseDir}/bankchannel/etc" excludes="**/*.java"/>
+		<fileset dir="${baseDir}/hostchannel/src/" excludes="**/*.java"/>
+	</path>
+	<!-- 编译apbatch工程 -->
+	<target name="compilehostchannel" >
+		<!-- 清理生成的类文件 -->
+		<delete dir="${hostchannel.output.classes}"/>
+		<mkdir dir="${hostchannel.output.classes}"/>
+ 
+		<javac debug="true" srcdir="${baseDir}/hostchannel/src" 
+		      
+					  debuglevel="${debuglevel}" encoding="utf-8" destdir="${hostchannel.output.classes}" source="${source}" target="${target}"  optimize="${optimize}" memorymaximumsize="500M"   fork="true" >
+			<!--src refid="apcal.java.sources.folders" /-->
+			<compilerarg line="-Xlint:unchecked  -Xlint:deprecation" />
+			<classpath refid="hostchannel.lib.path" />
+		</javac> 
+
+		<!-- 拷贝所有的配置文件 -->
+		<copy todir="${hostchannel.output.classes}"  overwrite="true">
+			<path refid="hostchannel.java.config.folders"/>
+		</copy>
+	</target>
+
+	<!-- 打war包-->
+	<target name="hostchannel" depends="compilehostchannel">
+		<war warfile="${distDir}/hostchannel.war" webxml="${baseDir}/hostchannel/WebContent/WEB-INF/web.xml">
+		  <fileset dir="${baseDir}/hostchannel/WebContent"> 
+			  <exclude name="**/lib/com/**" />
+				<exclude name="**/lib/META-INF/**" />   
+			</fileset>
+		</war>
+	</target>
+	
+	
+	
+	
+	
+	
+	
+	<target name="compileall" depends="compilebankchannel,compilehostchannel">
+	</target>
+	<target name="makeall" depends="init,bankchannel,hostchannel">
+	</target>
+
+	<!--垃圾回收-->
+	<target name="clean" unless="cleancondition">
+		<delete dir="${distDir}"/>
+		<mkdir dir="${distDir}" />
+		<condition property="cleancondition">  
+            <istrue value="true"/>  
+        </condition>  
+	</target>
+
+</project>
